@@ -51,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         jwt = jwtCookie.getValue();
 
+        //TODO : error here prevent new google account login fix it
         try {
             userEmail = jwtService.extractUsername(jwt); // Extract email from token
 
@@ -67,6 +68,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             null, // Credentials (usually null for JWT)
                             userDetails.getAuthorities()
                     );
+                    System.out.println("user details "+userDetails);
+                    System.out.println("user details "+userDetails.getAuthorities());
+
                     authToken.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );

@@ -48,7 +48,7 @@ public class SecurityConfig {
                                 "/api/users/reset-password-request",
                                 "/api/users/reset-password",
                                 "/api/users/validate", // Keep validate public for frontend check? Or protect it too?
-                                // "/api/users/google", // Handled by oauth2Login
+                                "/api/users/google", // Handled by oauth2Login
                                 "/oauth2/**",
                                 "/api/users/validate"
                                 //"api/cart/add"

@@ -18,7 +18,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -68,10 +70,26 @@ public class UserController {
                 .body(new LoginResponse(authenticateUser.getUsername(),authenticateUser.getEmail()));
     }
 
+@GetMapping("/points")
+public ResponseEntity<Integer> getUserPoints() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !authentication.isAuthenticated()) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    String email = authentication.getName();
+    Optional<User> user = userService.findByEmail(email);
+    if (user.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    int points = user.get().getPoints();
+    return ResponseEntity.ok(points);
+}
+
 
     @GetMapping("/google")
     public ResponseEntity<?> googleLogin(@AuthenticationPrincipal OAuth2User principal) {
-        System.out.println("fuciojg");
 
         if (principal == null) {
             return ResponseEntity.badRequest().body("User not authenticated");
@@ -100,13 +118,13 @@ public class UserController {
                 .secure(true)
                 .path("/")
                 .maxAge(24 * 60 * 60) // 24 hours
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
 
         // Send back response with token and user info
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                .body(Map.of("email", email, "name", name, "token", token));
+                .body(new LoginResponse( name, email ));
     }
 
     @PostMapping("/reset-password-request")
@@ -219,7 +237,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    //TODO : RETURN USER ADDESS AND EMAIL & other detail
 
 
 }
