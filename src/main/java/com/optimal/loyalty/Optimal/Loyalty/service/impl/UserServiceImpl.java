@@ -94,6 +94,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+     @Override
+    public void saveUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        userRepository.save(user);
+    }
+
 
     private User convertToEntity(CreateUserDTO createUserDTO){
 
