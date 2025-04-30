@@ -54,4 +54,24 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         return historyList;
     }
+
+     List<CartItemHistory> getCartItemHistory (String userId){
+          // Check if the userId is valid
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("User ID cannot be null or empty");
+        }
+
+        // Fetch the cart item history for the user
+        List<CartItemHistory> historyList = cartService.getCartItemHistoryByUserId(userId);
+
+        // If no history is found, return an empty list
+        if (historyList == null) {
+            return new ArrayList<>();
+        }
+
+        return historyList;
+
+
+     }
+    
 }

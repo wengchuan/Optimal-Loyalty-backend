@@ -16,11 +16,44 @@ public class CheckoutController {
 
     @Autowired
     public CheckoutController(CheckoutService checkoutService) {
+        
         this.checkoutService = checkoutService;
     }
 
-    @PostMapping
-    public List<CartItemHistory> checkOut(@RequestBody List<CartItem> cartItemList) {
-        return checkoutService.checkOut(cartItemList);
+    @PostMapping("/")
+    public ResponseEntity<List<CartItemHistory>> checkOut(@RequestBody List<CartItem> cartItemList) {
+      List<CartItemHistory> cartItemHistories = checkoutService.checkOut(cartItemList);
+     
+        return ResponseEntity.ok(cartItemHistories);
     }
+
+   @PostMapping("/cart_history")
+    public ResponseEntity<List<CartItemHistory>> getCartItemHistory() {
+        // Get the authentication object
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            // Return HTTP 401 Unauthorized if the user is not authenticated
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Extract the authenticated user's email
+        String email = authentication.getName();
+        System.out.println("Authenticated user: " + email);
+
+        // Retrieve the user from the database using userService
+        Optional<User> user = userService.findByEmail(email);
+        if (user.isEmpty()) {
+            // Return HTTP 401 Unauthorized if the user is not found
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Fetch the cart item history for the user
+        List<CartItemHistory> cartItemHistories = checkoutService.getCartItemHistory(user.get().getId());
+
+        // Return the history as a ResponseEntity
+        return ResponseEntity.ok(cartItemHistories);
+    }
+
+
+    
 }
