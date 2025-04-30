@@ -238,6 +238,28 @@ public ResponseEntity<Integer> getUserPoints() {
         }
     }
     //TODO : RETURN USER ADDESS AND EMAIL & other detail
+    @PostMapping("/user_info")
+    public ResponseEntity<User> getUserDetails() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = authentication.getName();
+        System.out.println("Authenticated user: " + email);
+
+        Optional<User> user = userService.findByEmail(email);
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else {
+            User user1 = user.get();
+        return ResponseEntity.ok(user1);
+    } 
+ return ResponseEntity.notFound().build();
+}
+
+
+
 
 
 }
