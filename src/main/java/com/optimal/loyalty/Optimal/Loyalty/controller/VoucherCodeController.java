@@ -9,6 +9,7 @@ import com.optimal.loyalty.Optimal.Loyalty.repository.UserRepository;
 import com.optimal.loyalty.Optimal.Loyalty.service.UserService;
 import com.optimal.loyalty.Optimal.Loyalty.service.VoucherCodeService;
 import com.optimal.loyalty.Optimal.Loyalty.service.VoucherService;
+import org.eclipse.angus.mail.handlers.image_jpeg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -76,8 +77,16 @@ public class VoucherCodeController {
                    Document document = new Document();
                    PdfWriter.getInstance(document, out);
                    document.open();
+
+                   document.add(new Paragraph("Voucher Name"));
+                   document.add(new Paragraph(voucher.get().getTitle()));
+                   document.add(new Paragraph("Voucher Points"));
+                    document.add(new Paragraph(String.valueOf(voucher.get().getPoints())));
+                   document.add(new Paragraph("Redeem time"));
+                    document.add(new Paragraph( new java.util.Date().toString()));
                    document.add(new Paragraph("Voucher Code"));
                    document.add(new Paragraph(code)); // Write the code
+
                    document.close();
 
                    // Return as PDF download

@@ -3,6 +3,7 @@ package com.optimal.loyalty.Optimal.Loyalty.controller;
 
 import com.optimal.loyalty.Optimal.Loyalty.dto.CreateUserDTO;
 import com.optimal.loyalty.Optimal.Loyalty.dto.UserDTO;
+import com.optimal.loyalty.Optimal.Loyalty.dto.UserDetailsUpdateDTO;
 import com.optimal.loyalty.Optimal.Loyalty.dto.UserLoginDTO;
 import com.optimal.loyalty.Optimal.Loyalty.model.PasswordRequest;
 import com.optimal.loyalty.Optimal.Loyalty.model.User;
@@ -254,11 +255,10 @@ public ResponseEntity<Integer> getUserPoints() {
         } else {
             User user1 = user.get();
         return ResponseEntity.ok(user1);
-    } 
- return ResponseEntity.notFound().build();
-}
+    }
+    }
     @PostMapping("/update")
-    public ResponseEntity<Void> updateCustomer(UserDetailsUpdateDTO userDetailsUpdateDTO) {
+    public ResponseEntity<Void> updateCustomer(@RequestBody UserDetailsUpdateDTO userDetailsUpdateDTO) {
          Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -272,30 +272,30 @@ public ResponseEntity<Integer> getUserPoints() {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-         User user = userOptional.get();
+         User user1 = user.get();
 
         // Check each field in UserDetailsUpdateDTO and update the user object if not null
         if (userDetailsUpdateDTO.getUsername() != null && !userDetailsUpdateDTO.getUsername().isEmpty()) {
-            user.setUsername(userDetailsUpdateDTO.getUsername());
+            user1.setUsername(userDetailsUpdateDTO.getUsername());
         }
         if (userDetailsUpdateDTO.getEmail() != null && !userDetailsUpdateDTO.getEmail().isEmpty()) {
-            user.setEmail(userDetailsUpdateDTO.getEmail());
+            user1.setEmail(userDetailsUpdateDTO.getEmail());
         }
         if (userDetailsUpdateDTO.getPassword() != null && !userDetailsUpdateDTO.getPassword().isEmpty()) {
-            user.setPassword(userDetailsUpdateDTO.getPassword());
+            user1.setPassword(userDetailsUpdateDTO.getPassword());
         }
         if (userDetailsUpdateDTO.getPhoneNumber() != null && !userDetailsUpdateDTO.getPhoneNumber().isEmpty()) {
-            user.setPhoneNumber(userDetailsUpdateDTO.getPhoneNumber());
+            user1.setPhoneNumber(userDetailsUpdateDTO.getPhoneNumber());
         }
         if (userDetailsUpdateDTO.getAddress() != null && !userDetailsUpdateDTO.getAddress().isEmpty()) {
-            user.setAddress(userDetailsUpdateDTO.getAddress());
+            user1.setAddress(userDetailsUpdateDTO.getAddress());
         }
         if (userDetailsUpdateDTO.getAboutMe() != null && !userDetailsUpdateDTO.getAboutMe().isEmpty()) {
-            user.setAboutMe(userDetailsUpdateDTO.getAboutMe());
+            user1.setAboutMe(userDetailsUpdateDTO.getAboutMe());
         }
 
         // Save the updated user object
-        userService.saveUser(user);
+        userService.saveUser(user1);
 
         return ResponseEntity.ok().build();
 

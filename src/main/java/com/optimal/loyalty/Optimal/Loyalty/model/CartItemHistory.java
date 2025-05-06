@@ -3,22 +3,37 @@ package com.optimal.loyalty.Optimal.Loyalty.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "\"CartItemHistory\"")
 public class CartItemHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "\"Id\"")
+    @Column(name = "\"id\"")
     private int Id;
 
     @Column(name = "\"voucher_id\"")
     private int voucherId;
 
-    @Column(name = "\"user_Id\"")
+    @Column(name = "\"user_id\"")
     private int userId;
 
     @Column(name = "\"quantity\"")
     private int quantity;
 
     private String completed_date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "\"voucher_id\"", referencedColumnName = "\"id\"", insertable = false, updatable = false)
+    private Voucher voucher;
+
+    // Getters and setters
+    public Voucher getVoucher() {
+        return voucher;
+    }
+
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
+    }
+
 
     public int getId() {
         return Id;

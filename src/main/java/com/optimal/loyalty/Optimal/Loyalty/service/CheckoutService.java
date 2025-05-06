@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface CheckoutService {
     List<CartItemHistory> checkOut(List<CartItem> cartItemList);
-    List<CartItemHistory> getCartItemHistory (String userId);
+    List<CartItemHistory> getCartItemHistory (int userId);
 }
