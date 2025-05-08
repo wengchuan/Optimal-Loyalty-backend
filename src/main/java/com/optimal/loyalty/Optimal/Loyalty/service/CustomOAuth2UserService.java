@@ -1,5 +1,6 @@
 package com.optimal.loyalty.Optimal.Loyalty.service;
 
+import com.optimal.loyalty.Optimal.Loyalty.dto.CreateUserDTO;
 import com.optimal.loyalty.Optimal.Loyalty.model.User;
 import com.optimal.loyalty.Optimal.Loyalty.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -28,8 +30,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existingUser.isEmpty()) {
             // Save new user to DB
             User newUser = new User();
+            String randomPassword = UUID.randomUUID().toString();
             newUser.setEmail(email);
             newUser.setUsername(name);
+            newUser.setPassword(randomPassword);
             userRepository.save(newUser);
         }
 

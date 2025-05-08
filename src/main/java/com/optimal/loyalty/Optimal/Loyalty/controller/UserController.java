@@ -107,7 +107,7 @@ public ResponseEntity<Integer> getUserPoints() {
         if (existingUser.isEmpty()) {
             String randomPassword = UUID.randomUUID().toString();
             CreateUserDTO newUser = new CreateUserDTO(name,randomPassword, email); // Use random password for now
-            existingUser = Optional.ofNullable(userService.createUser(newUser));
+            userService.createUser(newUser);
         }
 
         // Generate JWT token
@@ -187,6 +187,7 @@ public ResponseEntity<Integer> getUserPoints() {
 
             // Check if user exists
             Optional<User> user = userService.findByEmail(username);
+            System.out.println("Extracted Username: " + user.get().getPassword());
 
             // Check if user is present
             User userDetails = null;
@@ -207,6 +208,13 @@ public ResponseEntity<Integer> getUserPoints() {
             System.out.println("User Detail Obj : "+ userDetailsObj);
             boolean isValid = jwt.validateToken(token, userDetailsObj);
             System.out.println("Token Validation Result: " + isValid); // Debug log
+
+            //TODO CHange it later
+            if(user.get().getPassword()==null){
+                response.put("authenticated", true);
+                response.put("message", "Token is valid");
+                return ResponseEntity.ok(response);
+            }
 
             if (isValid) {
                 response.put("authenticated", true);

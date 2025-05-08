@@ -43,6 +43,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String jwt;
         final String userEmail;
 
+        String path = request.getRequestURI();
+        if (path.startsWith("/api/users/google") || path.startsWith("/oauth2/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 1. Try to extract JWT from Cookie
         Cookie jwtCookie = WebUtils.getCookie(request, "loginToken");
         if (jwtCookie == null || jwtCookie.getValue().isEmpty()) {

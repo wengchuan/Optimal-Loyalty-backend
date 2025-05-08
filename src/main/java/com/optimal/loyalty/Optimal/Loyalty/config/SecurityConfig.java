@@ -9,6 +9,10 @@ import org.springframework.security.authentication.AuthenticationProvider; // Im
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter; // Import
 import org.springframework.web.cors.CorsConfiguration;
@@ -60,13 +64,14 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider) // Tell Spring Security about the provider
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // Add JWT Filter BEFORE the standard username/password filter
                 .oauth2Login(oauth2 -> oauth2
-                                .userInfoEndpoint(userInfo -> userInfo
-                                        .userService(customOAuth2UserService) // Use the bean directly
-                                )
-                                .successHandler(oauth2LoginSuccessHandler)
-                        // Optional: Configure failure handler, authorization endpoint base URI if needed
-                        // .authorizationEndpoint(authz -> authz.baseUri("/oauth2/authorization"))
-                        // .redirectionEndpoint(redir -> redir.baseUri("/oauth2/callback/*"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)  // Use your custom service here
+                        )
+                        .successHandler(oauth2LoginSuccessHandler)
+                        // Optionally set the authorization endpoint
+                        .authorizationEndpoint(authz -> authz.baseUri("/oauth2/authorization"))
+                        // Set the redirection endpoint to match Google's callback
+                        .redirectionEndpoint(redir -> redir.baseUri("/login/oauth2/code/*"))
                 )
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
@@ -82,6 +87,12 @@ public class SecurityConfig {
 
 
         return http.build();
+    }
+
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
+        return new DefaultOAuth2UserService();
     }
 
     @Bean

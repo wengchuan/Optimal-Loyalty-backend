@@ -47,7 +47,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         if (existingUser.isEmpty()) {
             String randomPassword = UUID.randomUUID().toString();
             CreateUserDTO newUser = new CreateUserDTO(name, randomPassword, email);
-            existingUser = Optional.ofNullable(userService.createUser(newUser));
+            userService.createUser(newUser);
         }
 
         // Generate JWT token
